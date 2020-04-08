@@ -35,37 +35,48 @@ function! s:FocusReporting()
     execute "set <f24>=\<Esc>[O"
     execute "set <f25>=\<Esc>[I"
 
-    nnoremap <silent> <f24> :silent doautocmd FocusLost %<cr>
-    nnoremap <silent> <f25> :silent doautocmd FocusGained %<cr>
+    nnoremap <silent> <f24> :call <SID>DoFocusLost()<cr>
+    nnoremap <silent> <f25> :call <SID>DoFocusGained()<cr>
 
-    onoremap <silent> <f24> <esc>:silent doautocmd FocusLost %<cr>
-    onoremap <silent> <f25> <esc>:silent doautocmd FocusGained %<cr>
+    onoremap <silent> <f24> <esc>:call <SID>DoFocusLost()<cr>
+    onoremap <silent> <f25> <esc>:call <SID>DoFocusGained()<cr>
 
-    vnoremap <silent> <f24> <esc>:silent doautocmd FocusLost %<cr>gv
-    vnoremap <silent> <f25> <esc>:silent doautocmd FocusGained %<cr>gv
+    vnoremap <silent> <f24> <esc>:call <SID>DoFocusLost()<cr>gv
+    vnoremap <silent> <f25> <esc>:call <SID>DoFocusGained()<cr>gv
 
-    inoremap <silent> <f24> <c-\><c-o>:silent doautocmd FocusLost %<cr>
-    inoremap <silent> <f25> <c-\><c-o>:silent doautocmd FocusGained %<cr>
+    inoremap <silent> <f24> <c-\><c-o>:call <SID>DoFocusLost()<cr>
+    inoremap <silent> <f25> <c-\><c-o>:call <SID>DoFocusGained()<cr>
+
+    tnoremap <silent> <f24> <c-\><c-n>:call <SID>DoFocusLost()<cr>i
+    tnoremap <silent> <f25> <c-\><c-n>:call <SID>DoFocusGained()<cr>i
 
     cnoremap <silent> <f24> <c-\>e<SID>DoCmdFocusLost()<cr>
     cnoremap <silent> <f25> <c-\>e<SID>DoCmdFocusGained()<cr>
 endfunction
 
-function s:DoCmdFocusLost()
+function! s:DoFocusLost()
+  doautocmd FocusLost
+endfunction
+
+function! s:DoFocusGained()
+  doautocmd FocusGained
+endfunction
+
+function! s:DoCmdFocusLost()
     let cmd = getcmdline()
     let pos = getcmdpos()
 
-    silent doautocmd FocusLost %
+    call <SID>DoFocusLost()
 
     call setcmdpos(pos)
     return cmd
 endfunction
 
-function s:DoCmdFocusGained()
+function! s:DoCmdFocusGained()
     let cmd = getcmdline()
     let pos = getcmdpos()
 
-    silent doautocmd FocusGained %
+    call <SID>DoFocusGained()
     
     call setcmdpos(pos)
     return cmd
